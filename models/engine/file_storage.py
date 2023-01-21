@@ -69,32 +69,25 @@ class FileStorage:
         """call reload() method for deserializing the JSON file to objects"""
         self.reload()
 
-    def get(self, cls, id):
-        """ retrieves one object """
-        obj_dict = {}
-        obj = None
-        if cls:
-            obj_dict = FileStorage.__objects.values()
-            for item in obj_dict:
-                if item.id == id:
-                    obj = item
-            return obj
+    def get(self, cls=None, id=None):
+        """Returns obj based on class name and its ID"""
+        if cls is not None and id is not None:
+            for v in self.__objects.values():
+                if cls == v.__class__ or cls == v.__class__.__name__:
+                    if v.id == id:
+                        return v
+
+        return None
 
     def count(self, cls=None):
-        """ counts number of objects of a class in storage """
-        if cls:
-            obj_list = []
-            obj_dict = FileStorage.__objects.values()
-            for item in obj_dict:
-                if type(item).__name__ == cls:
-                    obj_list.append(item)
-            return len(obj_list)
+        """Returns the amount of objects"""
+        count = 0
+        if cls is not None and cls in classes:
+            for v in self.__objects.values():
+                if cls == v.__class__ or cls == v.__class__.__name__:
+                    count += 1
         else:
-            obj_list = []
-            for class_name in self.CNC:
-                if class_name == 'BaseModel':
-                    continue
-                obj_class = FileStorage.__objects
-                for item in obj_class:
-                    obj_list.append(item)
-            return len(obj_list)
+            for i in self.__objects.values():
+                count += 1
+
+        return count
